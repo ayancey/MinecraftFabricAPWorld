@@ -1,7 +1,4 @@
 from dataclasses import dataclass
-
-from jinja2.nodes import List
-
 from BaseClasses import ItemClassification
 
 @dataclass
@@ -27,22 +24,21 @@ useful = [
     "Sword"
 ]
 
-traps_index = len(useful) + useful_index - 1
+traps_index = len(useful) + useful_index
 
 traps = [
-    "Reverse Trap",
+    "Reverse Controls Trap",
+    "Inverted Mouse Trap",
     "Ice Trap",
     "Random Status Trap",
     "Stun Trap",
     "TNT Trap",
     "Teleport Trap",
     "Bee Trap",
-    "Insomnia Trap",
-    "Soul Sand Trap",
     "Literature Trap"
 ]
 
-end_index = len(traps) + traps_index - 1
+end_index = len(traps) + traps_index
 
 # Helper methods #######################################################################################################
 
@@ -50,8 +46,10 @@ end_index = len(traps) + traps_index - 1
 def get_item_table():
     items = []
 
-    progression_part = get_items_part(ItemClassification.progression, 1, progression)
+    progression_part = get_items_part(ItemClassification.progression, 0, progression)
     items += progression_part.items
+    useful_part = get_items_part(ItemClassification.useful, len(items), useful)
+    items += useful_part.items
     traps_part = get_items_part(ItemClassification.trap, len(items), traps)
     items += traps_part.items
 
@@ -59,7 +57,7 @@ def get_item_table():
 
 # This returns an MCItemPart, which is a list of items and an index for the next list's item ids
 def get_items_part(item_type: ItemClassification, new_index: int, names: list[str]):
-    return MCItemPart([MCItem(name, item_type, index + new_index) for index, name in enumerate(names)], new_index + len(names))
+    return MCItemPart([MCItem(name, item_type, index + new_index + 1) for index, name in enumerate(names)], new_index + len(names))
 
 
 item_table: list[MCItem] = get_item_table()
