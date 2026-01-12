@@ -5,7 +5,7 @@ from worlds.AutoWorld import World
 from worlds.minecraft_fabric.items import item_table, end_index, traps_index
 from worlds.minecraft_fabric.locations import location_table
 from worlds.minecraft_fabric.options import FMCOptions
-from worlds.minecraft_fabric.region import create_regions
+from worlds.minecraft_fabric.region import create_regions, connect_entrances
 
 
 class FabricMinecraftWorld(World):
@@ -27,6 +27,9 @@ class FabricMinecraftWorld(World):
     def create_regions(self):
         create_regions(self)
 
+    def connect_entrances(self) -> None:
+        connect_entrances(self)
+
     def create_item(self, name: str) -> "Item":
         return Item(name, ItemClassification.progression, self.item_name_to_id[name], self.player)
 
@@ -36,6 +39,7 @@ class FabricMinecraftWorld(World):
         # Progression Items ############################################################################################
         total_items = self.add_to_pool(0, total_items)
         total_items = self.add_to_pool(0, total_items)
+        total_items = self.add_to_pool(1, total_items)
 
         # Trap Items ###################################################################################################
         trap_weights = []

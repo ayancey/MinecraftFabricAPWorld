@@ -15,7 +15,8 @@ class MCItemPart:
 # Items that can be added ##############################################################################################
 
 progression = [
-    "Apple"
+    "Apple",
+    "Orange"
 ]
 
 useful_index = len(progression) - 1
