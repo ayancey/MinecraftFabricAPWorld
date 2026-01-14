@@ -3,6 +3,59 @@ from dataclasses import dataclass
 from Options import PerGameCommonOptions, Choice, Range, ItemSet, OptionSet, OptionGroup, Toggle
 
 
+# GOAL CONDITION #######################################################################################################
+
+# class GoalCondition(Choice):
+#     """
+#     Your Goal Condition for your game
+#
+#     ender_dragon - Goal when the Ender Dragon is defeated
+#     wither - Goal when the Wither is defeated
+#     both_bosses - Goal when the Ender Dragon and Wither is defeated
+#     advancements_only - Goal when you collect a certain amount of Advancements
+#     ruby_hunt - Goal when a certain amount of rubies are collected (McGuffin hunt)
+#     """
+#     option_ender_dragon = 0
+#     option_wither = 1
+#     option_both_bosses = 2
+#     option_advancements_only = 3
+#     option_ruby_hunt = 4
+#     default = 0
+#
+# class AdvancementsToGoal(Range):
+#     """
+#     Determines the Percentage of Advancements needed to goal the game
+#     """
+#     display_name = "Advancements to Goal"
+#     range_start = 0
+#     range_end = 100
+#     default = 50
+#
+class ExcludeHardAdvancements(Toggle):
+    """
+    Makes it so hard Advancements (such as "How Did We Get Here?" will not have checks)
+    """
+    display_name = "Exclude Hard Advancements"
+    default = True
+#
+# class RubyPercentage(Range):
+#     """
+#     The Amount of Rubies Needed in order to goal
+#     """
+#     display_name = "Rubies Needed"
+#     range_start = 0
+#     range_end = 100
+#     default = 0
+#
+# class TotalRubyPercentage(Range):
+#     """
+#     Replaces a Percentage of Junk and Trap items in the pool with Rubies
+#     """
+#     display_name = "Ruby Fill Percentage"
+#     range_start = 0
+#     range_end = 100
+#     default = 0
+
 # ABILITIES ############################################################################################################
 
 class RandomizeSwim(Toggle):
@@ -14,7 +67,6 @@ class RandomizeSprint(Toggle):
     """Removes the ability to Sprint, and adds a Sprint Item to the pool."""
     display_name = "Randomize Sprint"
     default = False
-
 
 # TRAP STUFF ###########################################################################################################
 
@@ -99,6 +151,10 @@ class LiteratureTrapWeight(BaseTrapWeight):
 
 @dataclass
 class FMCOptions(PerGameCommonOptions):
+    # Goal Related Options
+    # goal_condition: GoalCondition
+    exclude_hard_advancements: ExcludeHardAdvancements
+    # extra_rubies: ExtraRubyPercentage
     # Abilities
     randomize_swim: RandomizeSwim
     randomize_sprint: RandomizeSprint

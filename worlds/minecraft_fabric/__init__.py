@@ -3,7 +3,8 @@ from typing import Mapping, Any
 
 from BaseClasses import ItemClassification, Item
 from worlds.AutoWorld import World
-from worlds.minecraft_fabric.items import item_table, end_index, traps_index, useful_index
+from worlds.minecraft_fabric.items import item_table, end_index, traps_index, filler_index, bl_progression_index, \
+    useful_index
 from worlds.minecraft_fabric.locations import location_table
 from worlds.minecraft_fabric.options import FMCOptions
 from worlds.minecraft_fabric.region import create_regions, connect_entrances
@@ -51,18 +52,19 @@ class FabricMinecraftWorld(World):
             total_items = self.add_to_pool(1, total_items)
 
         # Progressive Tools
-        total_items = self.add_to_pool(2, total_items)
-        total_items = self.add_to_pool(2, total_items)
-        total_items = self.add_to_pool(2, total_items)
-        total_items = self.add_to_pool(2, total_items)
+        total_items = self.add_multiple_to_pool(2, 4, total_items)
         # Progressive Weapons
-        total_items = self.add_to_pool(3, total_items)
-        total_items = self.add_to_pool(3, total_items)
-        total_items = self.add_to_pool(3, total_items)
-        total_items = self.add_to_pool(3, total_items)
+        total_items = self.add_multiple_to_pool(3, 4, total_items)
+        # Progressive Smelting
+        total_items = self.add_multiple_to_pool(4, 2, total_items)
+        # Progressive Armor
+        total_items = self.add_multiple_to_pool(5, 5, total_items)
+        # Progressive Archery
+        total_items = self.add_multiple_to_pool(6, 2, total_items)
 
-        # for i in range(1, useful_index):
-        #     total_items = self.add_to_pool(i, total_items)
+        # Single Check Progressive Items
+        for i in range(bl_progression_index + 1, useful_index + 1):
+            total_items = self.add_to_pool(i, total_items)
 
         # Trap Items ###################################################################################################
         trap_weights = []
@@ -84,8 +86,12 @@ class FabricMinecraftWorld(World):
 
         # Filler Items #################################################################################################
         for i in range(total_items):
-            total_items = self.add_to_pool(self.random.randint(useful_index, traps_index), total_items)
+            total_items = self.add_to_pool(self.random.randint(filler_index + 1, traps_index), total_items)
 
+    def add_multiple_to_pool(self, index: int, count: int, total_items: int):
+        for i in range(count):
+            total_items = self.add_to_pool(index, total_items)
+        return total_items
 
     def add_to_pool(self, index: int, total_items: int):
         self.multiworld.itempool.append(Item(item_table[index].name, item_table[index].item_type, item_table[index].item_id, self.player))

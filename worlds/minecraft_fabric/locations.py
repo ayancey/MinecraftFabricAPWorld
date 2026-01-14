@@ -1,24 +1,135 @@
 
-# Vanilla Start Locations (can be done with start items)
-vanilla_start_locations = [
+# Start Locations
+vanilla = [
+    # Story Advancements
+    "Suit Up",
+    "Hot Stuff",
+    "Not Today, Thank You",
+    "Isn't It Iron Pick",
     "Stone Age",
-    "Monster Hunter",
+    "We Need to Go Deeper",
+    "Getting an Upgrade",
+    "Zombie Doctor",
+    "Ice Bucket Challenge",
+    "Acquire Hardware",
+    "Cover Me with Diamonds",
+    "Enchanter",
+    "Eye Spy",
+    "Diamonds!",
+    "The End?",
+
+    # Adventure Advancements
+    "Smithing with Style",
+    "Very Very Frightening",
+    "Surge Protector",
+    "Careful Restoration",
+    "It Spreads",
+    "Caves & Cliffs",
+    "Sniper Duel",
+    "Bullseye",
+    "Two Birds, One Arrow",
+    "Who's the Pillager Now?",
     "Light as a Rabbit",
-    "The Parrots and the Bats",
+    "Respecting the Remnants",
+    "Take Aim",
+    "Arbalistic",
+    "Hired Help",
+    "Sneak 100",
+    "Sweet Dreams",
+    "Monsters Hunted",
+    "Voluntary Exile",
+    "Is It a Bird?",
+    "Postmortal",
+    "Monster Hunter",
+    "Adventuring Time",
+    "Is It a Plane?",
+    "Star Trader",
+    "Sound of Music",
+    "Hero of the Village",
+    "The Power of Books",
+    "What a Deal!",
+    "Is It a Balloon?",
+    "Crafting a New Look",
+    "A Throwaway Joke",
+    "Sticky Situation",
+    "Ol' Betsy",
+
+    # Husbandry Advancements
     "You've Got a Friend in Me",
+    "With Our Powers Combined!",
     "Whatever Floats Your Goat!",
     "Best Friends Forever",
-    "A Seedy Place"
+    "Glow and Behold!",
+    "When the Squad Hops into Town",
+    "Fishy Business",
+    "Two by Two",
+    "Tactical Fishing",
+    "Little Sniffs",
+    "Total Beelocation",
+    "Bukkit Bukkit",
+    "Wax Off",
+    "Smells Interesting",
+    "Serious Dedication",
+    "Planting the Past",
+    "A Seedy Place",
+    "The Cutest Predator",
+    "Birthday Song",
+    "Wax On",
+    "A Balanced Diet",
+    "Bee Our Guest",
+    "The Healing Power of Friendship!",
+    "The Parrots and the Bats",
+    "A Complete Catalogue",
+
+    # Nether Advancements
+    "Who is Cutting Onions?",
+    "Oh Shiny",
+    "A Furious Cocktail",
+    "Bring Home the Beacon",
+    "Local Brewery",
+    "Hot Tourist Destinations",
+    "This Boat Has Legs",
+    "How Did We Get Here?",
+    "Spooky Scary Skeleton",
+    "Into Fire",
+    "War Pigs",
+    "Not Quite \"Nine\" Lives",
+    "Return to Sender",
+    "Those Were the Days",
+    "Feels Like Home",
+    "Hidden in the Depths",
+    "Beaconator",
+    "Withering Heights",
+    "Subspace Bubble",
+    "Country Lode, Take Me Home",
+    "Uneasy Alliance",
+    "A Terrible Fortress",
+    "Cover Me in Debris",
+
+    # End Advancements
+    "Free the End",
+    "The Next Generation",
+    "Great View From Up Here",
+    "The City at the End of the Game",
+    "Remote Getaway",
+    "The End... Again...",
+    "Sky's the Limit",
+    "You Need a Mint",
+
+    # Archipelago Excluive Advancements ################################################################################
+    "Getting Wood",
+    "Benchmarking",
+    "Time to Mine!",
+    "Hot Topic",
+    "Time to Farm!",
+    "Bake Bread",
+    "Time to Strike!"
 ]
 
-requiresStoneTool = [
-    "Getting an Upgrade"
-]
 
 def get_location_table():
     table = {}
-    table.update(add_locations(table, vanilla_start_locations))
-    table.update(add_locations(table, requiresStoneTool))
+    table.update(add_locations(table, vanilla))
     return table
 
 def add_locations(table: dict[str, int], locations: list[str]):
