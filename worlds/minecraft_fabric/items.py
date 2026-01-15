@@ -59,6 +59,7 @@ useful = [
     "Netherite Scrap",
     "Redstone Dust",
     "Lapis Lazuli",
+    "Ender Pearls",
 
     # Ore
     "Coal Ore Vein",
@@ -102,7 +103,11 @@ filler = [
     "Crimson Planks",
     "Warped Planks",
     "Bamboo Planks",
-    "Cobblestone",
+
+    "Stone",
+    "Andesite",
+    "Diorite",
+    "Granite",
 
     # Foods
     "Apples",

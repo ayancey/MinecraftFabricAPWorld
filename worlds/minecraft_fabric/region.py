@@ -38,9 +38,41 @@ def create_regions(world: FabricMinecraftWorld):
         "Time to Mine!",
         "Time to Farm!",
         "Bake Bread",
-        "Time to Strike!"
+        "Time to Strike!",
+        "Cow Tipper",
+        "When Pigs Fly",
+        "Overpowered"
     ], [
         "When the Squad Hops into Town"
+    ])
+
+    # Checks that Require Nether Access
+    create_locations_hard(world, "NetherAccess", [
+        "We Need to Go Deeper",
+        "Return to Sender",
+        "Those Were the Days",
+        "Subspace Bubble",
+        "A Terrible Fortress",
+        "Uneasy Alliance",
+        "War Pigs",
+        "Spooky Scary Skeleton",
+        "Into Fire",
+        "Hot Tourist Destinations",
+        "The Power of Books"
+    ], [
+        "With Our Powers Combined!"
+    ])
+
+    # Checks that Require End Access
+    create_locations(world, "EndAccess", [
+        "Free the End",
+        "The Next Generation",
+        "Remote Getaway",
+        "The City at the End of the Game",
+        "Sky's the Limit",
+        "Great View From Up Here",
+        "Eye Spy",
+        "The End?"
     ])
 
     create_locations(world, "DiamondTools", [
@@ -71,6 +103,10 @@ def create_regions(world: FabricMinecraftWorld):
     create_locations(world, "IronTools", [
         "Isn't It Iron Pick",
         "Diamonds!"
+    ])
+
+    create_locations(world, "MinecartRequired", [
+        "On A Rail"
     ])
 
     create_locations_hard(world, "Swim", [
@@ -104,7 +140,8 @@ def create_regions(world: FabricMinecraftWorld):
     ])
 
     create_locations(world, "Enchanting", [
-        "Enchanter"
+        "Enchanter",
+        "Librarian"
     ])
 
     create_locations(world, "Brush", [
@@ -190,23 +227,6 @@ def create_regions(world: FabricMinecraftWorld):
 
     # Nether ###########################################################################################################
 
-    # Checks that Require Nether Access
-    create_locations_hard(world, "NetherAccess", [
-        "We Need to Go Deeper",
-        "Return to Sender",
-        "Those Were the Days",
-        "Subspace Bubble",
-        "A Terrible Fortress",
-        "Uneasy Alliance",
-        "War Pigs",
-        "Spooky Scary Skeleton",
-        "Into Fire",
-        "Hot Tourist Destinations",
-        "The Power of Books"
-    ], [
-        "With Our Powers Combined!"
-    ])
-
     # Checks that require Bartering
     create_locations(world, "Bartering", [
         "Oh Shiny"
@@ -248,7 +268,7 @@ def create_regions(world: FabricMinecraftWorld):
     ])
 
     create_locations_hard(world, "EndGame", [
-
+        "Overkill"
     ], [
         "Monsters Hunted",
         "How Did We Get Here?",
@@ -259,18 +279,6 @@ def create_regions(world: FabricMinecraftWorld):
     ])
 
     # End ##############################################################################################################
-
-    # Checks that require End Access
-    create_locations(world, "EndAccess", [
-        "Free the End",
-        "The Next Generation",
-        "Remote Getaway",
-        "The City at the End of the Game",
-        "Sky's the Limit",
-        "Great View From Up Here",
-        "Eye Spy",
-        "The End?"
-    ])
 
     # Checks that require End Acess and Bottling
     create_locations(world, "DragonBreathBottling", [
@@ -291,6 +299,7 @@ def create_regions(world: FabricMinecraftWorld):
 
 def connect_entrances(world: FabricMinecraftWorld) -> None:
 
+    connect(world, "Menu", "MinecartRequired", lambda state: canSmelt(world, state) and state.has("Minecart Recipes", world.player))
     connect(world, "Menu", "FishingAndSmelt", lambda state: canSmelt(world, state) and state.has("Fishing Rod Recipes", world.player))
     connect(world, "Menu", "NeedsFurnace", lambda state: canSmelt(world, state))
     connect(world, "Menu", "RequiresNetherite", lambda state: canMakeNetherite(world, state))

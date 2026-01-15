@@ -125,7 +125,13 @@ vanilla = [
     "Bake Bread",
     "Time to Strike!",
     "The Lie",
-    "Delicious Fish"
+    "Delicious Fish",
+    "Cow Tipper",
+    "On A Rail",
+    "Overkill",
+    "Librarian",
+    "Overpowered",
+    "When Pigs Fly"
 ]
 
 
