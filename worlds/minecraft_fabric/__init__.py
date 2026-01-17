@@ -6,7 +6,7 @@ from worlds.AutoWorld import World
 from worlds.minecraft_fabric.items import item_table, useful_index, traps_index, bl_progression_index
 from worlds.minecraft_fabric.locations import location_table
 from worlds.minecraft_fabric.options import FMCOptions
-from worlds.minecraft_fabric.region import create_regions, connect_entrances
+from worlds.minecraft_fabric.region import create_regions
 
 
 class FabricMinecraftWorld(World):
@@ -29,27 +29,24 @@ class FabricMinecraftWorld(World):
         create_regions(self)
 
     def fill_slot_data(self) -> Mapping[str, Any]:
-        # from Utils import visualize_regions
-        # state = self.multiworld.get_all_state()
-        # state.update_reachable_regions(self.player)
-        #
-        # reachable_regions = state.reachable_regions[self.player]
-        # unreachable_regions: set[Region] = set()  # type: ignore
-        # for regionb in self.multiworld.regions:
-        #     if regionb not in reachable_regions:
-        #         unreachable_regions.add(regionb)
-        #
-        # visualize_regions(self.get_region("Menu"), f"{self.player_name}_world.puml", show_entrance_names=True,
-        #                   regions_to_highlight=unreachable_regions)
+        from Utils import visualize_regions
+        state = self.multiworld.get_all_state()
+        state.update_reachable_regions(self.player)
+
+        reachable_regions = state.reachable_regions[self.player]
+        unreachable_regions: set[Region] = set()  # type: ignore
+        for regionb in self.multiworld.regions:
+            if regionb not in reachable_regions:
+                unreachable_regions.add(regionb)
+
+        visualize_regions(self.get_region("Menu"), f"{self.player_name}_world.puml", show_entrance_names=True,
+                          regions_to_highlight=unreachable_regions)
 
         return {
             "goal_condition": self.options.goal_condition.value,
             "randomize_swim": self.options.randomize_swim.value,
             "randomize_sprint": self.options.randomize_sprint.value
         }
-
-    def connect_entrances(self) -> None:
-        connect_entrances(self)
 
     def create_item(self, name: str) -> "Item":
         return Item(name, ItemClassification.progression, self.item_name_to_id[name], self.player)

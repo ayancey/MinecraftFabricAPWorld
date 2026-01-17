@@ -2,6 +2,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
 
+# from worlds.minecraft_fabric.logic_conditions import canAccessEnd, canAccessNether, canUseStoneTools, canSmelt, \
+#     canUseIronTools, canWearIronArmor, canUseDiamondTools, canWearDiamondArmor, canSmith, canUseNetheriteTools, \
+#     canWearNetheriteArmor, canWearLeatherArmor, canUseBow, canUseCrossBow, canUseMinecart, canUseFishingRod, \
+#     canUseBrush, canTrade, canEnchant, canUseBucket, canBrew, canBarter, canSleep, canUseSpyglass, canSwim, \
+#     canUseBottles, canUseShears, canCompactResources, canSummonWither, canPlaceBeacon, canGetCryingObsidian, \
+#     canAccessVanillaEndGame
+from worlds.mlss.StateLogic import canDig
+
 if TYPE_CHECKING:
     from worlds.minecraft_fabric import FabricMinecraftWorld
 
@@ -18,7 +26,7 @@ def get_goal_condition(world, state):
 
     # I wish Python had Switch Case Statements :,(
     if goal_id == 0: # Ender Dragon
-        return canAccessEnd(world, state) and canAccessNether(world, state)
+        return canAccessEnd(world, state)
     elif goal_id == 1: # Wither
         return canSummonWither(world, state)
     elif goal_id == 2: # Both Bosses
@@ -30,15 +38,12 @@ def get_goal_condition(world, state):
 
 def create_regions(world: FabricMinecraftWorld):
     # Menu Region (always available)
-    create_locations_hard(world, "Menu", [
+    create_locations_advanced(world, "Menu", [
         "Stone Age",
         "Voluntary Exile",
         "Monster Hunter",
-        "Sneak 100",
-        "It Spreads",
         "The Parrots and the Bats",
         "You've Got a Friend in Me",
-        "Whatever Floats Your Goat!",
         "Best Friends Forever",
         "A Seedy Place",
         "Hero of the Village",
@@ -50,14 +55,18 @@ def create_regions(world: FabricMinecraftWorld):
         "Bake Bread",
         "Time to Strike!",
         "Cow Tipper",
-        "When Pigs Fly",
-        "Overpowered"
+        "When Pigs Fly"
     ], [
         "When the Squad Hops into Town"
+    ], [
+        "Whatever Floats Your Goat!",
+        "Sneak 100",
+        "It Spreads",
+        "Overpowered"
     ])
 
-    # Checks that Require Nether Access
-    create_locations_hard(world, "NetherAccess", [
+    # REQUIRES NETHER ACCESS
+    create_locations_and_connect(world, "Menu", "NetherAccess", [
         "We Need to Go Deeper",
         "Return to Sender",
         "Those Were the Days",
@@ -67,14 +76,15 @@ def create_regions(world: FabricMinecraftWorld):
         "War Pigs",
         "Spooky Scary Skeleton",
         "Into Fire",
-        "Hot Tourist Destinations",
         "The Power of Books"
     ], [
         "With Our Powers Combined!"
-    ])
+    ], [
+        "Hot Tourist Destinations"
+    ], lambda state: canAccessNether(world, state))
 
-    # Checks that Require End Access
-    create_locations(world, "EndAccess", [
+    # REQUIRES END ACCESS
+    create_locations_and_connect(world, "NetherAccess", "EndAccess", [
         "Free the End",
         "The Next Generation",
         "Remote Getaway",
@@ -83,201 +93,250 @@ def create_regions(world: FabricMinecraftWorld):
         "Great View From Up Here",
         "Eye Spy",
         "The End?"
-    ])
+    ], [], [], lambda state: canAccessEnd(world, state))
 
-    create_locations(world, "DiamondTools", [
-        "Ice Bucket Challenge"
-    ])
-
-    create_locations(world, "StoneToolsGet", [
+    # REQUIRES STONE TOOLS
+    create_locations_and_connect(world, "Menu", "HasStoneTools", [
         "Getting an Upgrade"
-    ])
+    ], [], [],  lambda state: canUseStoneTools(world, state))
 
-    create_locations(world, "SmeltIron", [
+    # REQUIRES LEATHER ARMOR
+    create_locations_and_connect(world, "Menu", "HasLeatherArmor", [
+        "Light as a Rabbit"
+    ], [], [], lambda state: canWearLeatherArmor(world, state))
+
+    # REQUIRES SMELTING
+    create_locations_and_connect(world, "HasStoneTools", "CanSmeltItems", [
         "Acquire Hardware",
-        "Not Today, Thank You"
-    ])
-
-    create_locations(world, "NeedsFurnace", [
+        "Not Today, Thank You",
         "Hot Topic"
-    ])
+    ], [
+        "Surge Protector"
+    ], [], lambda state: canSmelt(world, state))
 
-    create_locations(world, "DiamondArmor", [
-        "Cover Me with Diamonds"
-    ])
-
-    create_locations(world, "IronArmor", [
-        "Suit Up"
-    ])
-
-    create_locations(world, "IronTools", [
+    # REQUIRES IRON TOOLS
+    create_locations_and_connect(world, "CanSmeltItems", "HasIronTools", [
         "Isn't It Iron Pick",
         "Diamonds!"
-    ])
+    ], [], [
+        "Sound of Music"
+    ], lambda state: canUseIronTools(world, state))
 
-    create_locations(world, "MinecartRequired", [
-        "On A Rail"
-    ])
+    # REQUIRES IRON ARMOR
+    create_locations_and_connect(world, "CanSmeltItems", "HasIronArmor", [
+        "Suit Up"
+    ], [], [], lambda state: canWearIronArmor(world, state))
 
-    create_locations_hard(world, "Swim", [
-        "A Throwaway Joke",
-        "Very Very Frightening",
-        "Glow and Behold!",
-        "Smells Interesting",
-        "The Cutest Predator",
-        "The Healing Power of Friendship!"
-    ], [
-        "Little Sniffs",
-        "Planting the Past"
-    ])
+    # REQUIRES DIAMOND TOOLS
+    create_locations_and_connect(world, "HasIronTools", "HasDiamondTools", [
+        "Ice Bucket Challenge"
+    ], [], [], lambda state: canUseDiamondTools(world, state))
 
-    create_locations(world, "Bow", [
+    # REQUIRES DIAMOND ARMOR
+    create_locations_and_connect(world, "HasIronTools", "HasDiamondArmor", [
+        "Cover Me with Diamonds"
+    ], [], [], lambda state: canWearDiamondArmor(world, state))
+
+    # REQUIRES SMITHING
+    create_locations_and_connect(world, "CanSmeltItems", "CanSmithItems", [
+        "Crafting a New Look"
+    ], [], [], lambda state: canSmith(world, state))
+
+    # REQUIRES NETHERITE TOOLS
+    create_locations_and_connect(world, "CanSmithItems", "HasNetheriteTools", [
+        "Serious Dedication"
+    ], [], [], lambda state: canUseNetheriteTools(world, state))
+
+    # REQUIRES NETHERITE TOOLS
+    create_locations_and_connect(world, "CanSmithItems", "HasNetheriteArmor", [
+        "Cover Me in Debris"
+    ], [], [], lambda state: canWearNetheriteArmor(world, state))
+
+    # REQUIRES BOW
+    create_locations_and_connect(world, "Menu", "HasBow", [
         "Take Aim",
-        "Sniper Duel",
         "Bullseye"
-    ])
+    ], [
+        "Sniper Duel"
+    ], [], lambda state: canUseBow(world, state))
 
-    create_locations(world, "CrossBow", [
+    # REQUIRES CROSSBOW
+    create_locations_and_connect(world, "CanSmeltItems", "HasCrossbow", [
         "Ol' Betsy",
-        "Two Birds, One Arrow",
         "Who's the Pillager Now?",
         "Arbalistic"
-    ])
+    ], [
+        "Two Birds, One Arrow",
+    ], [], lambda state: canUseCrossBow(world, state))
 
-    create_locations(world, "Trading", [
-        "What a Deal!",
-        "Star Trader"
-    ])
+    # REQUIRES MINECART
+    create_locations_and_connect(world, "CanSmeltItems", "HasMinecart", [
+        "On A Rail"
+    ], [], [], lambda state: canUseMinecart(world, state))
 
-    create_locations(world, "Enchanting", [
-        "Enchanter",
-        "Librarian"
-    ])
-
-    create_locations(world, "Brush", [
-        "Respecting the Remnants",
-        "Careful Restoration"
-    ])
-
-    create_locations(world, "GlassBottle", [
-        "Sticky Situation",
-        "Bee Our Guest"
-    ])
-
-    create_locations(world, "IronCompacting", [
-        "Hired Help",
-        "Total Beelocation"
-    ])
-
-    create_locations(world, "WaxOnOff", [
-        "Wax On",
-        "Wax Off"
-    ])
-
-    create_locations(world, "Bucket", [
-        "Bukkit Bukkit",
-        "Birthday Song",
-        "Hot Stuff",
-        "The Lie"
-    ])
-
-    create_locations(world, "CopperOre", [
-        "Surge Protector"
-    ])
-
-    create_locations_hard(world, "Fishing", [
+    # REQUIRES FISHING
+    create_locations_and_connect(world, "Menu", "HasFishing", [
         "Fishy Business"
     ], [
         "A Complete Catalogue"
-    ])
+    ], [], lambda state: canUseFishingRod(world, state))
 
-    create_locations(world, "FishingAndSmelt", [
-        "Delicious Fish"
-    ])
+    # REQUIRES BRUSH
+    create_locations_and_connect(world, "CanSmeltItems", "HasBrush", [
+        "Respecting the Remnants",
+        "Careful Restoration"
+    ], [], [], lambda state: canUseBrush(world, state))
 
-    create_locations(world, "RequiresNetherite", [
-        "Country Lode, Take Me Home"
-    ])
+    # REQUIRES TRADING
+    create_locations_and_connect(world, "Menu", "HasTrading", [
+        "What a Deal!",
+        "Star Trader"
+    ], [], [], lambda state: canTrade(world, state))
 
-    create_locations(world, "NetheriteTool", [
-        "Serious Dedication"
-    ])
+    # REQUIRES ENCHANTING
+    create_locations_and_connect(world, "HasDiamondTools", "HasEnchanting", [
+        "Enchanter",
+        "Librarian",
+        "Total Beelocation"
+    ], [], [], lambda state: canEnchant(world, state))
 
-    create_locations(world, "ArmorTrim", [
-        "Crafting a New Look"
-    ])
+    # REQUIRES BUCKET
+    create_locations_and_connect(world, "CanSmeltItems", "HasBucket", [
+        "Birthday Song",
+        "Hot Stuff",
+        "The Lie"
+    ], [], [
+        "Bukkit Bukkit"
+    ], lambda state: canUseBucket(world, state))
 
-    create_locations(world, "BucketAndSwim", [
-        "Caves & Cliffs",
-        "Tactical Fishing"
-    ])
-
-    create_locations(world, "Sleep", [
-        "Sweet Dreams"
-    ])
-
-    create_locations(world, "SoundsOfMusic", [
-        "Sound of Music"
-    ])
-
-    create_locations(world, "LeatherArmor", [
-        "Light as a Rabbit"
-    ])
-
-    # Spy Glass ########################################################################################################
-    create_locations(world, "Spyglass", [
-        "Is It a Bird?"
-    ])
-    create_locations(world, "SpyglassNether", [
-        "Is It a Balloon?"
-    ])
-    create_locations(world, "SpyGlassEnd", [
-        "Is It a Plane?"
-    ])
-
-    # Nether ###########################################################################################################
-
-    # Checks that require Bartering
-    create_locations(world, "Bartering", [
-        "Oh Shiny"
-    ])
-
-    # Crying Obsidian
-    create_locations(world, "ObtainCryingObsidian", [
-        "Who is Cutting Onions?"
-    ])
-
-    # Checks that require Nether and Fishing Rod
-    create_locations(world, "RideStrider", [
-        "This Boat Has Legs",
-        "Feels Like Home"
-    ])
-
-    # Checks that require Smithing and Netherite Armor
-    create_locations(world, "NetheriteArmor", [
-        "Cover Me in Debris"
-    ])
-
-    # Respawn Anchor
-    create_locations(world, "RespawnAnchor", [
-        "Not Quite \"Nine\" Lives"
-    ])
-
-    # Checks that Require Wither Fight
-    create_locations(world, "WitherFight", [
-        "Withering Heights",
-        "Bring Home the Beacon",
-        "Beaconator"
-    ])
-
-    create_locations_hard(world, "Brewing", [
+    # REQUIRES BREWING
+    create_locations_and_connect(world, "NetherAccess", "HasBrewing", [
         "Local Brewery",
         "Zombie Doctor"
     ], [
         "A Furious Cocktail"
-    ])
+    ], [], lambda state: canBrew(world, state))
 
-    create_locations_hard(world, "EndGame", [
+    # REQUIRES BARTERING
+    create_locations_and_connect(world, "NetherAccess", "HasBartering", [
+        "Oh Shiny"
+    ], [], [], lambda state: canBarter(world, state))
+
+    # REQUIRES SLEEP
+    create_locations_and_connect(world, "Menu", "HasSleep", [
+        "Sweet Dreams"
+    ], [], [], lambda state: canSleep(world, state))
+
+    # REQUIRES SPYGLASS
+    create_locations_and_connect(world, "CanSmeltItems", "HasSpyglass", [
+        "Is It a Bird?"
+    ], [], [], lambda state: canUseSpyglass(world, state))
+
+    # REQUIRES GLASS BOTTLES
+    create_locations_and_connect(world, "CanSmeltItems", "HasBottles", [
+        "Sticky Situation",
+        "Bee Our Guest"
+    ], [], [], lambda state: canUseBottles(world, state))
+
+    # REQUIRES SWIMMING
+    create_locations_and_connect(world, "Menu", "HasSwim", [
+        "A Throwaway Joke",
+        "Glow and Behold!",
+        "The Cutest Predator",
+        "The Healing Power of Friendship!"
+    ], [], [], lambda state: canSwim(world, state))
+
+    # REQUIRES WITHER SUMMONING
+    create_locations_and_connect(world, "NetherAccess", "CanSummonWither", [
+        "Withering Heights"
+    ], [], [], lambda state: canSummonWither(world, state))
+
+    # REQUIRES BEACON
+    create_locations_and_connect(world, "CanSummonWither", "CanUseBeacon", [
+        "Bring Home the Beacon"
+    ], [
+        "Beaconator"
+    ], [], lambda state: canPlaceBeacon(world, state))
+
+    # REQUIRES CRYING OBSIDIAN
+    create_locations_and_connect(world, "HasBartering", "CanGetCryingObsidian", [
+        "Who is Cutting Onions?",
+        "Not Quite \"Nine\" Lives"
+    ], [], [], lambda state: canGetCryingObsidian(world, state))
+
+
+    ####################################################################################################################
+    # MULTIPLE CHECKS ##################################################################################################
+    ####################################################################################################################
+
+    # REQUIRES SWIMMING AND ENCHANTING
+    create_locations_and_connect(world, "HasEnchanting", "HasSwimAndEnchanting", [
+        "Very Very Frightening"
+    ], [], [], lambda state: canSwim(world, state) and canEnchant(world, state))
+
+    # REQUIRES SWIMMING AND BRUSH
+    create_locations_and_connect(world, "HasBrush", "HasSwimAndBrush", [
+        "Smells Interesting"
+    ], [
+        "Little Sniffs",
+        "Planting the Past"
+    ], [], lambda state: canSwim(world, state) and canUseBrush(world, state))
+
+    # REQUIRES FISHING AND SMELTING
+    create_locations_and_connect(world, "CanSmeltItems", "CanSmeltItemsAndHasFishing", [
+        "Delicious Fish"
+    ], [], [], lambda state: canSmelt(world, state) and canUseFishingRod(world, state))
+
+    # REQUIRES NETHERITE NO SMITHING
+    create_locations_and_connect(world, "HasDiamondTools", "NetheriteNoSmithing", [
+        "Country Lode, Take Me Home"
+    ], [], [], lambda state: canSmelt(world, state) and canAccessNether(world, state) and canUseDiamondTools(world, state))
+
+    # REQUIRES SHEARS AND COMPACTING
+    create_locations_and_connect(world, "CanSmeltItems", "HasShearsAndCompacting", [
+        "Wax On",
+        "Wax Off"
+    ], [], [], lambda state: canUseShears(world, state) and canCompactResources(world, state))
+
+    # REQUIRES BUCKET AND SWIM
+    create_locations_and_connect(world, "HasBucket", "HasBucketAndSwim", [
+        "Caves & Cliffs",
+        "Tactical Fishing"
+    ], [], [], lambda state: canUseBucket(world, state) and canSwim(world, state))
+
+    # REQUIRES SPYGLASS AND NETHER
+    create_locations_and_connect(world, "HasSpyglass", "HasSpyglassNether", [
+        "Is It a Balloon?"
+    ], [], [], lambda state: canUseSpyglass(world, state) and canAccessNether(world, state))
+
+    # REQUIRES SPYGLASS AND END
+    create_locations_and_connect(world, "HasSpyglass", "HasSpyglassEnd", [
+        "Is It a Plane?"
+    ], [], [], lambda state: canUseSpyglass(world, state) and canAccessEnd(world, state))
+
+    # REQUIRES COMPACTING AND SMELTING
+    create_locations_and_connect(world, "CanSmeltItems", "CanSmeltAndCanCompact", [
+        "Hired Help"
+    ], [], [], lambda state: canSmelt(world, state) and canCompactResources(world, state))
+
+    # REQUIRES NETHER AND FISHING ROD
+    create_locations_and_connect(world, "NetherAccess", "NetherAccessAndFishingRod", [
+        "This Boat Has Legs",
+        "Feels Like Home"
+    ], [], [], lambda state: canAccessNether(world, state) and canUseFishingRod(world, state))
+
+    # REQUIRES END AND SMELTING
+    create_locations_and_connect(world, "EndAccess", "EndAccessAndSmelting", [
+        "The End... Again..."
+    ], [], [], lambda state: canAccessEnd(world, state) and canSmelt(world, state))
+
+    # REQUIRES END AND GLASS BOTTLES AND SMELTING
+    create_locations_and_connect(world, "EndAccessAndSmelting", "EndAccessAndGlassBottles", [
+        "You Need a Mint"
+    ], [], [], lambda state: canAccessEnd(world, state) and canSmelt(world, state) and canUseBottles(world, state))
+
+    # REQUIRES VANILLA END GAME
+    create_locations_and_connect(world, "EndAccess", "VanillaEndGame", [
         "Overkill"
     ], [
         "Monsters Hunted",
@@ -286,169 +345,27 @@ def create_regions(world: FabricMinecraftWorld):
         "Adventuring Time",
         "Two by Two",
         "A Balanced Diet"
-    ])
-
-    # End ##############################################################################################################
-
-    # Checks that require End Acess and Bottling
-    create_locations(world, "DragonBreathBottling", [
-        "You Need a Mint"
-    ])
-
-    # Checks that require End and Nether Access and Smelting
-    create_locations(world, "RespawnDragon", [
-        "The End... Again..."
-    ])
+    ], [], lambda state: canAccessVanillaEndGame(world, state))
 
     world.multiworld.completion_condition[world.player] = lambda state: get_goal_condition(world, state)
 
-
-########################################################################################################################
-# Connect Entrances ####################################################################################################
-########################################################################################################################
-
-def connect_entrances(world: FabricMinecraftWorld) -> None:
-
-    connect(world, "Menu", "MinecartRequired", lambda state: canSmelt(world, state) and state.has("Minecart Recipes", world.player))
-    connect(world, "Menu", "FishingAndSmelt", lambda state: canSmelt(world, state) and state.has("Fishing Rod Recipes", world.player))
-    connect(world, "Menu", "NeedsFurnace", lambda state: canSmelt(world, state))
-    connect(world, "Menu", "RequiresNetherite", lambda state: canMakeNetherite(world, state))
-    connect(world, "Menu", "Enchanting", lambda state: state.has("Enchanting", world.player))
-    connect(world, "Menu", "IronArmor", lambda state: state.has("Progressive Armor", world.player, 3) and canSmelt(world, state))
-    connect(world, "Menu", "DiamondArmor", lambda state: state.has("Progressive Armor", world.player, 4) and canUseIronPickaxe(world, state))
-    connect(world, "Menu", "DiamondTools", lambda state: canUseDiamondPickaxe(world, state))
-    connect(world, "Menu", "IronTools", lambda state: canUseIronPickaxe(world, state) and canSmelt(world, state))
-    connect(world, "Menu", "SmeltIron", lambda state: canSmelt(world, state) and canUseStonePickaxe(world, state))
-    connect(world, "Menu", "StoneToolsGet", lambda state: canUseStonePickaxe(world, state))
-    connect(world, "Menu", "Spyglass", lambda state: canMakeCopper(world, state) and state.has("Spyglass Recipes", world.player))
-    connect(world, "Menu", "SpyglassNether", lambda state: canMakeCopper(world, state) and state.has("Spyglass Recipes", world.player) and canAccessNether(world, state))
-    connect(world, "Menu", "SpyGlassEnd", lambda state: canMakeCopper(world, state) and state.has("Spyglass Recipes", world.player) and canAccessEnd(world, state))
-    connect(world, "Menu", "Trading", lambda state: state.has("Villager Trading", world.player))
-    connect(world, "Menu", "ArmorTrim", lambda state: canSmith(world, state))
-    connect(world, "Menu", "GlassBottle", lambda state: state.has("Glass Bottle Recipes", world.player))
-    connect(world, "Menu", "Bow", lambda state: state.has("Progressive Archery", world.player))
-    connect(world, "Menu", "CrossBow", lambda state: state.has("Progressive Archery", world.player, 2))
-    connect(world, "Menu", "CopperOre", lambda state: canMakeCopper(world, state))
-    connect(world, "Menu", "BucketAndSwim", lambda state: hasBucket(world, state) and hasSwim(world, state))
-    connect(world, "Menu", "Brush", lambda state: hasBrush(world, state))
-    connect(world, "Menu", "Sleep", lambda state: state.has("Sleeping", world.player))
-    connect(world, "Menu", "Swim", lambda state: hasSwim(world, state))
-    connect(world, "Menu", "IronCompacting", lambda state: canUseIronPickaxe(world, state) and canSmelt(world, state) and state.has("Resource Compacting Recipes", world.player))
-    connect(world, "Menu", "SoundsOfMusic", lambda state: canSmelt(world, state) or canUseIronPickaxe(world, state))
-    connect(world, "Menu", "LeatherArmor", lambda state: state.has("Progressive Armor", world.player))
-    connect(world, "Menu", "Fishing", lambda state: state.has("Fishing Rod Recipes", world.player))
-    connect(world, "Menu", "Bucket", lambda state: hasBucket(world, state))
-    connect(world, "Menu", "WaxOnOff", lambda state: state.has("Shear Recipes", world.player) and state.has("Resource Compacting Recipes", world.player))
-    connect(world, "Menu", "NetheriteTool", lambda state: canMakeNetheriteTool(world, state)and state.has("Progressive Tools", world.player, 4))
-    # Nether
-    connect(world, "Menu", "NetherAccess", lambda state: canAccessNether(world, state))
-    connect(world, "Menu", "Bartering", lambda state: canBarter(world, state))
-    connect(world, "Menu", "ObtainCryingObsidian", lambda state: canBarter(world, state) or state.has("Progressive Tools", world.player, 3))
-    connect(world, "Menu", "RideStrider", lambda state: canAccessNether(world, state) and state.has("Fishing Rod Recipes", world.player))
-    connect(world, "Menu", "NetheriteArmor", lambda state: canMakeNetheriteTool(world, state) and state.has("Progressive Armor", world.player, 5))
-    connect(world, "Menu", "RespawnAnchor", lambda state: canGetCryingObsidian(world, state) and canAccessNether(world, state) and state.has("Sleeping", world.player))
-    connect(world, "Menu", "WitherFight", lambda state: canSummonWither(world, state))
-    connect(world, "Menu", "Brewing", lambda state: canBrewPotions(world, state))
-    connect(world, "Menu", "EndGame", lambda state: canBrewPotions(world, state) and canSummonWither(world, state) and canAccessEnd(world, state) and hasSwim(world, state))
-
-    # End
-    connect(world, "Menu", "EndAccess", lambda state: canAccessEnd(world, state))
-    connect(world, "Menu", "DragonBreathBottling", lambda state: canBottleDragonBreath(world, state))
-    connect(world, "Menu", "RespawnDragon", lambda state: canRespawnEnderDragon(world, state))
-
-
-# Conditions ###########################################################################################################
-
-# Generic Conditions
-
-def canUseStonePickaxe(world: FabricMinecraftWorld, state: CollectionState):
-    return state.has("Progressive Tools", world.player, 1)
-
-def canUseIronPickaxe(world: FabricMinecraftWorld, state: CollectionState):
-    return state.has("Progressive Tools", world.player, 2)
-
-def canUseDiamondPickaxe(world: FabricMinecraftWorld, state: CollectionState):
-    return state.has("Progressive Tools", world.player, 3)
-
-def canSmelt(world: FabricMinecraftWorld, state: CollectionState):
-    return state.has("Progressive Smelting", world.player, 1)
-
-def canSmith(world: FabricMinecraftWorld, state: CollectionState):
-    return state.has("Smithing", world.player)
-
-def canBrewPotions(world: FabricMinecraftWorld, state: CollectionState):
-    return canAccessNether(world, state) and check_for_items(world, state, ["Brewing", "Glass Bottle Recipes"])
-
-def canMakeCopper(world: FabricMinecraftWorld, state: CollectionState):
-    return canSmelt(world, state) and state.has("Progressive Tools", world.player, 1)
-
-def hasBucket(world: FabricMinecraftWorld, state: CollectionState):
-    return state.has("Bucket Recipes", world.player) and canSmelt(world, state) and canUseStonePickaxe(world, state)
-
-def hasBrush(world: FabricMinecraftWorld, state: CollectionState):
-    return state.has("Brush Recipes", world.player) and canSmelt(world, state) and canUseStonePickaxe(world, state)
-
-def hasSwim(world: FabricMinecraftWorld, state: CollectionState):
-    if world.options.randomize_swim:
-        return state.has("Swim", world.player)
-    else:
-        return True
-
-# Nether Conditions
-
-def canAccessNether(world: FabricMinecraftWorld, state: CollectionState):
-    return (canUseDiamondPickaxe(world, state) or hasBucket(world, state)) and state.has("Flint and Steel Recipes", world.player)
-
-def canBarter(world: FabricMinecraftWorld, state: CollectionState):
-    return canAccessNether(world, state) and state.has("Piglin Bartering", world.player)
-
-def canGetCryingObsidian(world: FabricMinecraftWorld, state: CollectionState):
-    return canBarter(world, state) or state.has("Progressive Tools", world.player, 3)
-
-def canMakeNetherite(world: FabricMinecraftWorld, state: CollectionState):
-    return canAccessNether(world, state) and canUseDiamondPickaxe(world, state)
-
-def canMakeNetheriteTool(world: FabricMinecraftWorld, state: CollectionState):
-    return canMakeNetherite(world, state) and canSmith(world, state)
-
-def canSummonWither(world: FabricMinecraftWorld, state: CollectionState):
-    return canAccessNether(world, state) and state.has("Wither Summoning", world.player)
-
-def canUseBeacon(world: FabricMinecraftWorld, state: CollectionState):
-    return canSummonWither(world, state)
-
-# End Conditions
-
-def canAccessEnd(world: FabricMinecraftWorld, state: CollectionState):
-    return state.has("Eye of Ender Recipes", world.player) and canAccessNether(world, state)
-
-def canBottleDragonBreath(world: FabricMinecraftWorld, state: CollectionState):
-    return canRespawnEnderDragon(world, state) and state.has("Glass Bottle Recipes", world.player)
-
-def canRespawnEnderDragon(world: FabricMinecraftWorld, state: CollectionState):
-    return canAccessEnd(world, state) and canAccessNether(world, state) and state.has("Progressive Smelting", world.player)
-
 # Helper Methods #######################################################################################################
 
-def create_locations_hard(world: FabricMinecraftWorld, region_name: str, locations: list[str], hard_locations: list[str]):
-    if world.options.exclude_hard_advancements:
-        return create_locations(world, region_name, locations)
-    else:
-        locations += hard_locations
-        return create_locations(world, region_name, locations)
+def create_locations_advanced(world: FabricMinecraftWorld, region_name: str, locations: list[str], hard_locations: list[str], exploration_locations: list[str]):
+    location_list = locations
+
+    if not world.options.exclude_hard_advancements:
+        location_list += hard_locations
+
+    if not world.options.exclude_exploration_advancements:
+        location_list += exploration_locations
+
+    return create_locations(world, region_name, location_list)
 
 def create_locations(world: FabricMinecraftWorld, region_name: str, locations: list[str]):
     region = Region(region_name, world.player, world.multiworld, region_name)
     region.locations += [Location(world.player, name, location_table[name], region) for name in locations]
     world.multiworld.regions.append(region)
-
-def check_for_items(world: FabricMinecraftWorld, state: CollectionState, items: list[str]):
-    bl = True
-    for item in items:
-        if not state.has(item, world.player):
-            bl = False
-    return bl
-
 
 def connect(world, source: str, target: str, rule=None, reach: Optional[bool] = False,
             rule_to_str: Optional[str] = None, ) -> Optional[Entrance]:
@@ -464,3 +381,147 @@ def connect(world, source: str, target: str, rule=None, reach: Optional[bool] = 
     connection.connect(target_region)
 
     return connection if reach else None
+
+def create_locations_and_connect(world: FabricMinecraftWorld, region_name: str, new_region_name: str, locations: list[str], hard_locations: list[str], exploration_locations: list[str], rule=None, reach: Optional[bool] = False,
+            rule_to_str: Optional[str] = None, ):
+    create_locations_advanced(world, new_region_name, locations, hard_locations, exploration_locations)
+    connect(world, region_name, new_region_name, rule)
+
+
+
+
+
+
+
+
+
+# ABILITY CHECKS
+
+def canSwim(world: FabricMinecraftWorld, state: CollectionState):
+    if world.options.randomize_swim:
+        return state.has("Swim", world.player)
+    else:
+        return True
+
+def speedrunnerMode(world: FabricMinecraftWorld, state: CollectionState):
+    if world.options.speedrunner_mode:
+        return canSleep(world, state)
+    else:
+        return True
+
+def canTrade(world: FabricMinecraftWorld, state: CollectionState):
+    return state.has("Villager Trading", world.player)
+
+def canBarter(world: FabricMinecraftWorld, state: CollectionState):
+    return state.has("Piglin Bartering", world.player) and canAccessNether(world, state) and canSmelt(world, state)
+
+def canSleep(world: FabricMinecraftWorld, state: CollectionState):
+    return state.has("Sleeping", world.player)
+
+def canSummonWither(world: FabricMinecraftWorld, state: CollectionState):
+    return canAccessNether(world, state) and state.has("Wither Summoning", world.player)
+
+# CRAFTING STATION CHECKS
+
+def canSmelt(world: FabricMinecraftWorld, state: CollectionState):
+    return canUseStoneTools(world, state) and state.has("Progressive Smelting", world.player)
+
+def canSmith(world: FabricMinecraftWorld, state: CollectionState):
+    return canSmelt(world, state) and state.has("Smithing", world.player)
+
+def canBrew(world: FabricMinecraftWorld, state: CollectionState):
+    return canAccessNether(world, state) and canUseBottles(world, state) and state.has("Brewing", world.player)
+
+def canEnchant(world: FabricMinecraftWorld, state: CollectionState):
+    return canUseDiamondTools(world, state) and state.has("Enchanting", world.player) and canCompactResources(world, state)
+
+def canAccessMiscJobsites(world: FabricMinecraftWorld, state: CollectionState):
+    return canSmelt(world, state) and state.has("Other Crafting Stations", world.player)
+
+# MINING TOOL CHECKS
+
+def canUseStoneTools(world: FabricMinecraftWorld, state: CollectionState):
+    return state.has("Progressive Tools", world.player)
+
+def canUseIronTools(world: FabricMinecraftWorld, state: CollectionState):
+    return canSmelt(world, state) and state.has("Progressive Tools", world.player, 2)
+
+def canUseDiamondTools(world: FabricMinecraftWorld, state: CollectionState):
+    return canUseIronTools(world, state) and state.has("Progressive Tools", world.player, 3)
+
+def canUseNetheriteTools(world: FabricMinecraftWorld, state: CollectionState):
+    return canUseDiamondTools(world, state) and state.has("Progressive Tools", world.player, 4) and canSmith(world, state)
+
+# ARMOR CHECKS
+
+def canWearLeatherArmor(world: FabricMinecraftWorld, state: CollectionState):
+    return state.has("Progressive Armor", world.player)
+
+
+def canWearIronArmor(world: FabricMinecraftWorld, state: CollectionState):
+    return canSmelt(world, state) and state.has("Progressive Armor", world.player, 3)
+
+def canWearDiamondArmor(world: FabricMinecraftWorld, state: CollectionState):
+    return canWearIronArmor(world, state) and state.has("Progressive Armor", world.player, 4) and canUseIronTools(world, state)
+
+def canWearNetheriteArmor(world: FabricMinecraftWorld, state: CollectionState):
+    return canWearDiamondArmor(world, state) and state.has("Progressive Armor", world.player, 5) and canSmith(world, state) and canUseDiamondTools(world, state)
+
+# OTHER TOOL CHECKS
+
+def canUseBucket(world: FabricMinecraftWorld, state: CollectionState):
+    return canSmelt(world, state) and state.has("Bucket Recipes", world.player)
+
+def canUseFlintAndSteel(world: FabricMinecraftWorld, state: CollectionState):
+    return canSmelt(world, state) and state.has("Flint and Steel Recipes", world.player)
+
+def canUseMinecart(world: FabricMinecraftWorld, state: CollectionState):
+    return canSmelt(world, state) and state.has("Minecart Recipes", world.player)
+
+def canUseBrush(world: FabricMinecraftWorld, state: CollectionState):
+    return canSmelt(world, state) and state.has("Brush Recipes", world.player)
+
+def canUseSpyglass(world: FabricMinecraftWorld, state: CollectionState):
+    return canSmelt(world, state) and state.has("Spyglass Recipes", world.player)
+
+def canUseShears(world: FabricMinecraftWorld, state: CollectionState):
+    return canSmelt(world, state) and state.has("Shear Recipes", world.player)
+
+def canUseFishingRod(world: FabricMinecraftWorld, state: CollectionState):
+    return state.has("Fishing Rod Recipes", world.player)
+
+def canUseBottles(world: FabricMinecraftWorld, state: CollectionState):
+    return canSmelt(world, state) and state.has("Glass Bottle Recipes", world.player)
+
+def canUseBow(world: FabricMinecraftWorld, state: CollectionState):
+    return state.has("Progressive Archery", world.player)
+
+def canUseCrossBow(world: FabricMinecraftWorld, state: CollectionState):
+    return state.has("Progressive Archery", world.player, 2) and canSmelt(world, state)
+
+# OTHER RECIPE CHECKS
+
+def canCompactResources(world: FabricMinecraftWorld, state: CollectionState):
+    return state.has("Resource Compacting Recipes", world.player)
+
+def canGetEyesOfEnder(world: FabricMinecraftWorld, state: CollectionState):
+    return canAccessNether(world, state) and state.has("Eye of Ender Recipes", world.player)
+
+# DIMENSION CHECKS
+
+def canAccessNether(world: FabricMinecraftWorld, state: CollectionState):
+    return (canUseDiamondTools(world, state) or canUseBucket(world, state)) and canUseFlintAndSteel(world, state)
+
+def canAccessEnd(world: FabricMinecraftWorld, state: CollectionState):
+    return canGetEyesOfEnder(world, state) and speedrunnerMode(world, state)
+
+# MISC VANILLA
+
+def canPlaceBeacon(world: FabricMinecraftWorld, state: CollectionState):
+    return canSummonWither(world, state) and canSmelt(world, state) and canUseDiamondTools(world, state) and canCompactResources(world, state)
+
+def canGetCryingObsidian(world: FabricMinecraftWorld, state: CollectionState):
+    return canBarter(world, state) or canUseDiamondTools(world, state)
+
+def canAccessVanillaEndGame(world: FabricMinecraftWorld, state: CollectionState):
+    return canEnchant(world, state) and canBrew(world, state) and canPlaceBeacon(world, state) and canAccessEnd(world, state) and canAccessNether(world, state) and canUseDiamondTools(world, state)

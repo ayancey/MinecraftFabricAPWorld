@@ -34,9 +34,23 @@ class GoalCondition(Choice):
 #
 class ExcludeHardAdvancements(Toggle):
     """
-    Makes it so hard Advancements (such as "How Did We Get Here?" will not have checks)
+    Makes it so hard Advancements (such as "How Did We Get Here?") will not have checks
     """
     display_name = "Exclude Hard Advancements"
+    default = True
+
+class ExcludeExplorationAdvancements(Toggle):
+    """
+    Makes it so Advancements that require a lot of exploration (such as "Sound of Music" or "Whatever Floats Your Goat!") will not have checks
+    """
+    display_name = "Exclude Exploration Advancements"
+    default = False
+
+class SpeedRunnerMode(Toggle):
+    """
+    Makes it so Beds are a required check for defeating the Ender Dragon
+    """
+    display_name = "Speedrunner Mode"
     default = True
 #
 # class RubyPercentage(Range):
@@ -155,6 +169,8 @@ class FMCOptions(PerGameCommonOptions):
     # Goal Related Options
     goal_condition: GoalCondition
     exclude_hard_advancements: ExcludeHardAdvancements
+    exclude_exploration_advancements: ExcludeExplorationAdvancements
+    speedrunner_mode: SpeedRunnerMode
     # extra_rubies: ExtraRubyPercentage
     # Abilities
     randomize_swim: RandomizeSwim
