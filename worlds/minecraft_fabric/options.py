@@ -72,7 +72,7 @@ class TotalRubiesInGame(Range):
     display_name = "Total Rubies In Game"
     range_start = 1
     range_end = 500
-    default = 50
+    default = 16
 
 class RubyPercentageNeeded(Range):
     """
