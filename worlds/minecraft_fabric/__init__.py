@@ -57,6 +57,7 @@ class FabricMinecraftWorld(World):
             # Rubies
             "rubies_to_goal": self.options.percentage_of_rubies_needed.value,
             "total_rubies": self.max_ruby_count,
+            "deathlink": self.options.deathlink_enabled.value,
             # Other Options
             "keep_inventory": self.options.keep_inventory.value,
             "randomize_swim": self.options.randomize_swim.value,
@@ -107,15 +108,15 @@ class FabricMinecraftWorld(World):
 
         # Trap Items ###################################################################################################
         trap_weights = []
-        trap_weights += self.add_trap_weight(traps_index + 1, self.options.reverseControlsTrapWeight)
-        trap_weights += self.add_trap_weight(traps_index + 2, self.options.invertedMouseTrapWeight)
-        trap_weights += self.add_trap_weight(traps_index + 3, self.options.iceTrapWeight)
-        trap_weights += self.add_trap_weight(traps_index + 4, self.options.randomEffectTrapWeight)
-        trap_weights += self.add_trap_weight(traps_index + 5, self.options.stunTrapWeight)
-        trap_weights += self.add_trap_weight(traps_index + 6, self.options.tntTrapWeight)
-        trap_weights += self.add_trap_weight(traps_index + 7, self.options.teleportTrapWeight)
-        trap_weights += self.add_trap_weight(traps_index + 8, self.options.beeTrapWeight)
-        trap_weights += self.add_trap_weight(traps_index + 9, self.options.literatureTrapWeight)
+        trap_weights += self.add_trap_weight(traps_index + 1, self.options.reverse_controls_trap_weight)
+        trap_weights += self.add_trap_weight(traps_index + 2, self.options.inverted_mouse_trap_weight)
+        trap_weights += self.add_trap_weight(traps_index + 3, self.options.ice_trap_weight)
+        trap_weights += self.add_trap_weight(traps_index + 4, self.options.random_effect_trap_weight)
+        trap_weights += self.add_trap_weight(traps_index + 5, self.options.stun_trap_weight)
+        trap_weights += self.add_trap_weight(traps_index + 6, self.options.tnt_trap_weight)
+        trap_weights += self.add_trap_weight(traps_index + 7, self.options.teleport_trap_weight)
+        trap_weights += self.add_trap_weight(traps_index + 8, self.options.bee_trap_weight)
+        trap_weights += self.add_trap_weight(traps_index + 9, self.options.literature_trap_weight)
         trap_count = 0 if (len(trap_weights) == 0) else math.ceil(
             total_items * (self.options.trap_fill_percentage.value / 100.0))
 

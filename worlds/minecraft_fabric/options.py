@@ -219,6 +219,12 @@ class LiteratureTrapWeight(BaseTrapWeight):
     """
     display_name = "Literature Trap Weight"
 
+class Deathlink(Toggle):
+    """
+    Enabled Deathlink
+    """
+    display_name = "Deathlink"
+    default = False
 
 # class EnabledMods(OptionSet):
 #     """List Compatible Mods here to include their checks in the game"""
@@ -243,13 +249,14 @@ class FMCOptions(PerGameCommonOptions):
     randomize_jump: RandomizeJump
     # Traps
     trap_fill_percentage: TrapFillPercentage
-    reverseControlsTrapWeight: ReverseControlsTrapWeight
-    invertedMouseTrapWeight: InvertedMouseTrapWeight
-    iceTrapWeight: IceTrapWeight
-    randomEffectTrapWeight: RandomEffectTrapWeight
-    stunTrapWeight: StunTrapWeight
-    tntTrapWeight: TNTTrapWeight
-    teleportTrapWeight: TeleportTrapWeight
-    beeTrapWeight: BeeTrapWeight
-    literatureTrapWeight: LiteratureTrapWeight
+    reverse_controls_trap_weight: ReverseControlsTrapWeight
+    inverted_mouse_trap_weight: InvertedMouseTrapWeight
+    ice_trap_weight: IceTrapWeight
+    random_effect_trap_weight: RandomEffectTrapWeight
+    stun_trap_weight: StunTrapWeight
+    tnt_trap_weight: TNTTrapWeight
+    teleport_trap_weight: TeleportTrapWeight
+    bee_trap_weight: BeeTrapWeight
+    literature_trap_weight: LiteratureTrapWeight
+    deathlink_enabled: Deathlink
 
