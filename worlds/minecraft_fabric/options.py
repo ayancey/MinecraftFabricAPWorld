@@ -16,7 +16,6 @@ class GoalCondition(Choice):
     both_bosses - Goal when the Ender Dragon and Wither is defeated
     advancements_only - Goal when you collect a certain amount of Advancements
     ruby_hunt - Goal when a certain amount of rubies are collected (McGuffin hunt)
-    ("ADVANCEMENT ONLY" CURRENTLY NOT IMPLEMENTED)
     """
     option_ender_dragon = 0
     option_wither = 1
